@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ほっか契約更新 ARROW変換</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="common.js"></script>
+  <script src="hourly.js"></script>
+  <script src="sources.js"></script>
+  <script src="payroll.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>ほっか契約更新 ARROW変換</h1>
+
+    <label class="drop" id="drop">
+      <input type="file" accept=".xlsx,.csv" multiple>
+      <span class="drop-main">ファイルを選択</span>
+      <span class="drop-sub">またはここにドロップ(まとめて選択できます)</span>
+    </label>
+
+    <ul class="sources" id="sources"></ul>
+
+    <section class="error" id="error" hidden>
+      <p class="message"></p>
+      <ul></ul>
+    </section>
+
+    <section class="error" id="plan-error" hidden>
+      <p class="message"></p>
+      <ul></ul>
+    </section>
+
+    <section class="choices" id="choices" hidden>
+      <p class="choices-title">店舗で条件が違う人がいます。メイン時給にする条件を選んでください</p>
+      <div id="choice-list"></div>
+    </section>
+
+    <section id="outputs" hidden>
+      <div class="tabs" id="tabs" role="tablist"></div>
+      <div id="panels"></div>
+    </section>
+  </main>
+
+  <template id="result-template">
+    <div class="panel view" role="tabpanel">
+      <div class="notice" hidden>
+        <p class="message"></p>
+        <ul></ul>
+      </div>
+      <div class="result">
+        <dl class="summary">
+          <div><dt>従業員</dt><dd class="emp-count"></dd></div>
+          <div><dt>出力行</dt><dd class="out-count"></dd></div>
+        </dl>
+        <p class="breakdown"></p>
+        <div class="filters">
+          <input type="search" class="filter" placeholder="社員コードで絞り込み">
+          <label class="only-flagged"><input type="checkbox"><span></span></label>
+        </div>
+        <div class="preview">
+          <table>
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button type="button" class="download">ダウンロード</button>
+        <p class="download-hint" hidden>メイン時給を選ぶとダウンロードできます</p>
+      </div>
+      <div class="error" hidden>
+        <p class="message"></p>
+        <ul></ul>
+      </div>
+    </div>
+  </template>
+</body>
+</html>
