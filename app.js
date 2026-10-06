@@ -7,7 +7,9 @@ const yen = (n) => n.toLocaleString('ja-JP');
 const signedYen = (n) => (n > 0 ? '+' : '') + yen(n);
 
 // sort: 並び替え中の列 { id, dir }(dir は 1=昇順 / -1=降順)。null なら社員コード順
-const state = { bugyo: null, arrow: null, outcome: null, sort: null };
+// errors: ファイルごとの読み込みエラー。もう一方のファイルを読み込んでも消えないよう別々に持つ
+const state = { bugyo: null, arrow: null, outcome: null, sort: null, errors: { bugyo: null, arrow: null } };
+const FILE_LABELS = { bugyo: '奉行の給与データ', arrow: 'ARROWの給与データ' };
 
 function fillMessage(box, { message, details }) {
   box.querySelector('.message').textContent = message;
@@ -19,10 +21,16 @@ function fillMessage(box, { message, details }) {
   box.hidden = false;
 }
 
-function showError(err) {
-  console.error(err);
+function renderErrors() {
+  const failed = Object.entries(state.errors).filter(([, err]) => err);
+  for (const key of Object.keys(state.errors)) $(`drop-${key}`).classList.toggle('failed', !!state.errors[key]);
+  $('error').hidden = true;
+  if (!failed.length) return;
   $('result').hidden = true;
-  fillMessage($('error'), err instanceof ReconcileError ? err : { message: '読み込めませんでした' });
+  fillMessage($('error'), {
+    message: failed.map(([key, err]) => `${FILE_LABELS[key]}: ${err.message}`).join(' / '),
+    details: failed.flatMap(([, err]) => err.details || []),
+  });
 }
 
 function setupDropZone(zone, onFile) {
@@ -68,14 +76,15 @@ function loader(key, read) {
     const zone = $(`drop-${key}`);
     zone.querySelector('.drop-sub').textContent = file.name;
     zone.classList.add('loaded');
-    $('error').hidden = true;
     try {
       state[key] = read(await file.arrayBuffer());
+      state.errors[key] = null;
     } catch (err) {
+      console.error(err);
       state[key] = null;
-      showError(err);
-      return;
+      state.errors[key] = err instanceof ReconcileError ? err : { message: '読み込めませんでした' };
     }
+    renderErrors();
     run();
   };
 }

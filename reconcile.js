@@ -43,8 +43,8 @@ const ITEMS = [
   { key: 'net', label: '差引支給額', arrow: ['差引支給額'], bugyo: ['差引支給額'] },
 ];
 const ARROW_OPTIONAL = new Set(['残業手当(資格手当分)']);
-// 山陰シートには早朝手当の列がない
-const BUGYO_OPTIONAL = new Set(['早朝手当']);
+// シートによって列がない項目(例: 山陰シートには早朝手当がない)
+const BUGYO_OPTIONAL = new Set(['早朝手当', '日別手当']);
 const BUGYO_EMP = '社員番号';
 const BUGYO_NAME = '氏名';
 const ARROW_NAME = '名前';

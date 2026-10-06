@@ -77,6 +77,7 @@ h1 {
 }
 .drop:hover, .drop.over { border-color: var(--accent); }
 .drop.loaded { border-style: solid; }
+.drop.failed { border-color: var(--error-text); }
 .drop input { display: none; }
 .drop-main { font-weight: 600; }
 .drop-sub {
