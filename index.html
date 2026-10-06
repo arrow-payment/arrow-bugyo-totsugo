@@ -3,78 +3,64 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ほっか契約更新 ARROW変換</title>
+  <title>給与突合</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-  <script src="common.js"></script>
-  <script src="hourly.js"></script>
-  <script src="sources.js"></script>
-  <script src="payroll.js"></script>
+  <script src="reconcile.js"></script>
   <script src="app.js" defer></script>
 </head>
 <body>
   <main>
-    <h1>ほっか契約更新 ARROW変換</h1>
+    <h1>給与突合</h1>
 
-    <label class="drop" id="drop">
-      <input type="file" accept=".xlsx,.csv" multiple>
-      <span class="drop-main">ファイルを選択</span>
-      <span class="drop-sub">またはここにドロップ(まとめて選択できます)</span>
-    </label>
-
-    <ul class="sources" id="sources"></ul>
+    <div class="drops">
+      <label class="drop" id="drop-bugyo">
+        <input type="file" accept=".xlsx">
+        <span class="drop-main">奉行の給与データ</span>
+        <span class="drop-sub">xlsxを選択またはドロップ</span>
+      </label>
+      <label class="drop" id="drop-arrow">
+        <input type="file" accept=".csv">
+        <span class="drop-main">ARROWの給与データ</span>
+        <span class="drop-sub">csvを選択またはドロップ</span>
+      </label>
+    </div>
 
     <section class="error" id="error" hidden>
       <p class="message"></p>
       <ul></ul>
     </section>
 
-    <section class="error" id="plan-error" hidden>
-      <p class="message"></p>
-      <ul></ul>
-    </section>
+    <section class="result" id="result" hidden>
+      <div class="result-head">
+        <dl class="summary">
+          <div><dt>突合</dt><dd id="matched"></dd></div>
+          <div><dt>全項目一致</dt><dd id="all-ok"></dd></div>
+          <div><dt>不一致あり</dt><dd id="ng"></dd></div>
+        </dl>
+        <label class="tolerance">差が<input type="number" id="tolerance" min="1" step="1" value="10">円未満は一致</label>
+      </div>
+      <p class="breakdown" id="breakdown"></p>
 
-    <section class="choices" id="choices" hidden>
-      <p class="choices-title">店舗で条件が違う人がいます。メイン時給にする条件を選んでください</p>
-      <div id="choice-list"></div>
-    </section>
+      <div class="notice" id="notice" hidden>
+        <p class="message"></p>
+        <ul></ul>
+      </div>
 
-    <section id="outputs" hidden>
-      <div class="tabs" id="tabs" role="tablist"></div>
-      <div id="panels"></div>
+      <div class="filters">
+        <select id="item-filter"></select>
+        <input type="search" id="emp-filter" class="filter" placeholder="社員コードで絞り込み">
+        <label class="only-ng"><input type="checkbox" id="only-ng"><span>不一致のみ</span></label>
+      </div>
+      <div class="preview">
+        <table>
+          <thead id="head"></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <p class="empty" id="empty" hidden>該当する社員はいません</p>
+      </div>
+      <button type="button" id="download">結果をダウンロード</button>
     </section>
   </main>
-
-  <template id="result-template">
-    <div class="panel view" role="tabpanel">
-      <div class="notice" hidden>
-        <p class="message"></p>
-        <ul></ul>
-      </div>
-      <div class="result">
-        <dl class="summary">
-          <div><dt>従業員</dt><dd class="emp-count"></dd></div>
-          <div><dt>出力行</dt><dd class="out-count"></dd></div>
-        </dl>
-        <p class="breakdown"></p>
-        <div class="filters">
-          <input type="search" class="filter" placeholder="社員コードで絞り込み">
-          <label class="only-flagged"><input type="checkbox"><span></span></label>
-        </div>
-        <div class="preview">
-          <table>
-            <thead></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <button type="button" class="download">ダウンロード</button>
-        <p class="download-hint" hidden>メイン時給を選ぶとダウンロードできます</p>
-      </div>
-      <div class="error" hidden>
-        <p class="message"></p>
-        <ul></ul>
-      </div>
-    </div>
-  </template>
 </body>
 </html>
